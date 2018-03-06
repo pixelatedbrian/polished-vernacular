@@ -1,0 +1,4 @@
+time~avg_roc_auc~toxic_auc~s_toxic_auc~obscene_auc~threat_auc~insult_auc~i_hate_auc~model_type~kfold~notes
+1520304817~logistic regression~10~0.97940066~0.96976663~0.98588689~0.98539858~0.98280542~0.97646843~first model: logistic regression, word to vec 10k features, kfold=10
+1520305116~logistic regression~10~0.98031667~0.97147155~0.98628551~0.98659402~0.98270635~0.97783571~first model: logistic regression, word to vec max 50k features, kfold=10
+1520306189~logistic regression~10~0.97805962~0.96683633~0.98546599~0.98433009~0.98254798~0.97487412~first model: logistic regression, word to vec max 5k features, kfold=10
