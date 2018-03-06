@@ -1,4 +1,8 @@
-time~avg_roc_auc~toxic_auc~s_toxic_auc~obscene_auc~threat_auc~insult_auc~i_hate_auc~model_type~kfold~notes
-1520304817~logistic regression~10~0.97940066~0.96976663~0.98588689~0.98539858~0.98280542~0.97646843~first model: logistic regression, word to vec 10k features, kfold=10
-1520305116~logistic regression~10~0.98031667~0.97147155~0.98628551~0.98659402~0.98270635~0.97783571~first model: logistic regression, word to vec max 50k features, kfold=10
-1520306189~logistic regression~10~0.97805962~0.96683633~0.98546599~0.98433009~0.98254798~0.97487412~first model: logistic regression, word to vec max 5k features, kfold=10
+time~model_type~kfold~avg_roc_auc~toxic_auc~s_toxic_auc~obscene_auc~threat_auc~insult_auc~i_hate_auc~notes
+1520324601~logistic regression~10~0.97805938~0.96683645~0.98546603~0.98432994~0.98254680~0.97487402~0.97430305~first model: logistic regression, word to vec max 5k features, kfold=10
+1520324858~logistic regression~10~0.97940065~0.96976661~0.98588697~0.98539853~0.98280541~0.97646854~0.97607786~first model: logistic regression, word to vec max 10k features, kfold=10
+1520325081~logistic regression~10~0.98028011~0.97131228~0.98625838~0.98629807~0.98313235~0.97771810~0.97696149~first model: word to vec max 25k features
+1520325478~logistic regression~10~0.98028018~0.97131240~0.98625857~0.98629830~0.98313274~0.97771804~0.97696105~first model: word to vec max 50k features
+1520325960~logistic regression~10~0.98030888~0.97141889~0.98635543~0.98662033~0.98262070~0.97780253~0.97703541~first model: word to vec max 75k features
+1520326406~logistic regression~10~0.98029035~0.97136123~0.98635123~0.98661312~0.98266483~0.97773446~0.97701727~first model: word to vec max 100k features
+1520326755~logistic regression~10~0.98031655~0.97147146~0.98628531~0.98659408~0.98270609~0.97783570~0.97700667~first model: logistic regression, word to vec max 50k features, lemmatizing
