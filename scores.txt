@@ -8,3 +8,4 @@ time~model_type~kfold~avg_roc_auc~toxic_auc~s_toxic_auc~obscene_auc~threat_auc~i
 1520326755~logistic regression~10~0.98031655~0.97147146~0.98628531~0.98659408~0.98270609~0.97783570~0.97700667~first model: logistic regression, word to vec max 50k features, lemmatizing
 1520388298~Multinomial NB~10~0.94616877~0.93451963~0.96752538~0.94369452~0.94779950~0.94344644~0.94002718~second model: word to vec max 50k features, fit_prior=True
 1520388496~Multinomial NB~10~0.95332332~0.94487322~0.97160498~0.95359746~0.94660931~0.95350371~0.94975125~word2vec max 50k features, fit_prior=False, alpha=0.03
+1520414904~Stacked Voting Ensemble~10~0.97066580~0.96932158~0.97860966~0.98320126~0.95674089~0.97450542~0.96161602~word2vec max 50k features, Logistic Regression, MultinomialNB, and RandomForests
