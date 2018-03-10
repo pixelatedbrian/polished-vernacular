@@ -19,6 +19,8 @@ from keras.wrappers.scikit_learn import KerasClassifier  # enables use of sklear
 from sklearn.metrics import roc_auc_score, roc_curve, auc
 from sklearn.model_selection import StratifiedKFold, cross_val_score, train_test_split
 
+from keras import backend as K
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from tensorflow.python.client import device_lib
@@ -147,14 +149,14 @@ def write_model_timestamp(model_type, kfolds, scores, note):
 
 def evaluate_models():
 
-    train = pd.read_csv('../data/train.csv').fillna(' ')
-    test = pd.read_csv('../data/test.csv').fillna(' ')
+    train_data = pd.read_csv('../data/train.csv').fillna(' ')
+    test_data = pd.read_csv('../data/test.csv').fillna(' ')
 
-    train_text = train['comment_text']
-    test_text = test['comment_text']
+    train_text = train_data['comment_text']
+    test_text = test_data['comment_text']
     all_text = pd.concat([train_text, test_text])
 
-    print("Vectorize combined corpus with TfidfVectorizer.")
+    print("(╯°o°）╯︵ ┻━┻  Vectorize combined corpus with TfidfVectorizer.")
     word_vectorizer = TfidfVectorizer(
         sublinear_tf=True,
         strip_accents='unicode',
@@ -165,16 +167,16 @@ def evaluate_models():
         max_features=25000)    # 10k was initial
 
     word_vectorizer.fit(all_text)
-    print("Completed TfidfVectorizer fitting.")
+    print("\n(╯^.^）╯︵ ┻━┻  :  Completed TfidfVectorizer fitting.\n")
 
-    print("Transform corpora with word_vectorizer.")
+    print("\n(╯^.^）╯︵ ┻━┻  :  Transform corpora with word_vectorizer.\n")
     train_word_features = word_vectorizer.transform(train_text)
     test_word_features = word_vectorizer.transform(test_text)
 
     print("train shape:", train_word_features.shape)
     print("test shape:", test_word_features.shape)
 
-    print("All training/test data transformed.")
+    print("\n(╯^.^）╯︵ ┻━┻  :  All training/test data transformed.\n")
 
     scores = []
 
@@ -182,7 +184,7 @@ def evaluate_models():
 
     print(train_word_features.shape)
 
-    print("Create KerasClassifier wrapper for cross_val_score to use")
+    print("\n(╯^.^）╯︵ ┻━┻  :  Create KerasClassifier wrapper for cross_val_score to use\n")
     # Wrap Keras model so it can be used by scikit-learn
     classifier = KerasClassifier(build_fn=dnn_model,
                                  epochs=5,
@@ -195,31 +197,74 @@ def evaluate_models():
 
     class_names = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
 
-    for class_name in class_names:
-        train_target = train[class_name]
+    data = {}   # will store the results of each kfold as a list with key class_name
 
-        print("\nStarting for class: {:}\n".format(class_name))
+    for class_name in class_names:
+        train_target = train_data[class_name]
+
+        print("\n(╯^.^）╯︵ ┻━┻  :  Starting for class: {:}\n".format(class_name))
 
         kfold = StratifiedKFold(n_splits=NUM_FOLDS, shuffle=True, random_state=1337)
 
-    #     results = cross_val_score(classifier, train_features, train_target, cv=5, n_jobs=-1, scoring='roc_auc')
-        results = cross_val_score(classifier, train_features, train_target, cv=kfold, scoring='roc_auc', n_jobs=1)
+        class_results = []
 
-        print('CV Spread for class "{}":'.format(class_name))
-        for result in results:
+        idx = -1    # will hold which iteration since it didn't like
+                    # enumerate in the kfold.split loop.
+                    # start at -1 so that it starts at the 0 index
+
+        # this will get the indices of the train and test splits
+        # don't forget to use these indices on the data to actually carve it
+        for train, test in kfold.split(train_features, train_target):
+
+            idx += 1
+
+            model = dnn_model(learning_rate=0.005,
+                              drop_out=0.50,
+                              input_shape=(train_word_features.shape[1],))
+
+            # declare callback here because it's a mess to do inline in model.fit
+            _callbacks = [roc_callback(
+                training_data=(
+                    train_word_features[train],
+                    train_target[train]),
+                validation_data=(
+                    train_word_features[test],
+                    train_target[test]))]
+
+            model.fit(train_word_features[train],
+                      train_target[train],
+                      batch_size=512,
+                      epochs=5,
+                      verbose=1,
+                      validation_data=(train_word_features[test], train_target[test]),
+                      callbacks=_callbacks)
+
+            preds = model.predict(train_word_features[test])
+            result = roc_auc_score(train_target[test], preds)
+
+            class_results.append(result)
+
+            print("Class: {: <14} Slice: {:2d} ROC AUC: {:0.4f}".format(class_name, idx, result))
+
+            K.clear_session()
+
+        data[class_name] = class_results
+
+        print('\n(╯^.^）╯︵ ┻━┻  :  :  CV Spread for class "{}\n":'.format(class_name))
+        for result in data[class_name]:
             print("    {:0.4f}".format(result), end=" ")
 
         print(" ")
 
-        cv_score = np.mean(results)
+        cv_score = np.mean(data[class_name])
         scores.append(cv_score)
 
-        print('    CV score for class "{}" is {:0.4}\n'.format(class_name, cv_score))
+        print('\n(╯^.^）╯︵ ┻━┻  :  CV score for class "{}" is {:0.4}\n'.format(class_name, cv_score))
 
         classifier.fit(train_features, train_target)
     #     submission[class_name] = classifier.predict_proba(test_features)[:, 1]
 
-    print('Total CV score is {:0.4f}'.format(np.mean(scores)))
+    print('\n(╯^.^）╯︵ ┻━┻  :  Total CV score is {:0.4f}\n'.format(np.mean(scores)))
 
 
 if __name__ == "__main__":
