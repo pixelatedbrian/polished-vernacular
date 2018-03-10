@@ -3,3 +3,5 @@
 *.pyc
 notebooks/*.ipynb_checkpoints
 *.zip
+*.png
+*.mp4
