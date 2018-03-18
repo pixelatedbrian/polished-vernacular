@@ -6,3 +6,5 @@ notebooks/*.ipynb_checkpoints
 *.png
 *.mp4
 *.h5
+*.tar
+*.tar.gz
