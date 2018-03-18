@@ -5,3 +5,4 @@ notebooks/*.ipynb_checkpoints
 *.zip
 *.png
 *.mp4
+*.h5
